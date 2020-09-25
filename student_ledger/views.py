@@ -132,7 +132,7 @@ class BillListView(LoginRequiredMixin, ListView):
         credit = 0
 
         for bill in context['object_list']:
-            payable += bill.total
+            payable += bill.amount_payable
             paid += bill.paid
             balance += bill.balance
             credit += bill.credit
@@ -164,12 +164,24 @@ class BillGenerateView(LoginRequiredMixin, BSModalFormView):
     success_message = "Bills successfully created"
 
 
-
     def form_valid(self, form):
         if not self.request.is_ajax():
-            context = self.get_context_data()
-            formset = context['bill_item']
-            form.generate(formset)
+            class_for = form.cleaned_data['class_for']
+            session = form.cleaned_data['session']
+            term = form.cleaned_data['term']
+            amount_payable = form.cleaned_data['amount_payable']
+            students = Student.objects.filter(current_class=class_for)
+            bills = []
+            for student in students:
+                bills.append(Bill(
+                    student=student,
+                    session=session,
+                    term=term,
+                    class_for=class_for,
+                    amount_payable=amount_payable
+                ))
+            Bill.objects.bulk_create(bills)
+
         return super().form_valid(form)
 
 
@@ -177,11 +189,6 @@ class BillPay(BSModalCreateView):
     form_class = BillPayForm
     template_name = 'student_ledger/create_form.html'
     success_url = reverse_lazy('bills')
-
-    def get_form_kwargs(self, *args, **kwargs):
-        kwargs = super(BillPay, self).get_form_kwargs(*args, **kwargs)
-        kwargs['pk'] = self.kwargs['pk']
-        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -226,30 +233,16 @@ class StatementView(LoginRequiredMixin, View):
             total_debt = 0
             total_credit = 0
             for bill in bills:
-                total_bill += bill.total
+                total_bill += bill.amount_payable
                 total_paid += bill.paid
                 total_debt += bill.balance
                 total_credit += bill.credit
 
             bill_total = (total_bill, total_paid, total_debt, total_credit)
 
-            #Bill items
-            bill_items = BillItem.objects.filter(bill__in=bills)
 
             #payments
             payments = Payment.objects.filter(bill__in=bills)
-
-            categories = {}
-
-            bill_item_total = 0
-
-            for cat in bill_items.values('bill_category', 'bill_category__name').distinct():
-                for item in bill_items.filter(bill_category_id=cat['bill_category']):
-                    bill_item_total += item.total
-
-                p = payments.filter(bill_item__bill_category=cat['bill_category']).aggregate(Sum('amount_paid'))
-
-                categories[cat['bill_category__name']] = [bill_item_total, p['amount_paid__sum']]
 
             #banks
             banks = {}
@@ -259,7 +252,6 @@ class StatementView(LoginRequiredMixin, View):
 
             context["bills"] = bills
             context["bill_totals"] = bill_total
-            context["categories"] = categories
             context["banks"] = banks
             #context["d"]
 

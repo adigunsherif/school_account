@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 class StudentClass(models.Model):
     CATEGORIES = [
@@ -73,12 +74,12 @@ class Bill(models.Model):
 
     @property
     def balance(self):
-        total = self.total - self.paid
+        total = self.amount_payable - self.paid
         return 0 if total < 0 else total
 
     @property
     def credit(self):
-        total = self.total - self.paid
+        total = self.amount_payable - self.paid
         if total > 0:
             return  0
         else: return abs(total)

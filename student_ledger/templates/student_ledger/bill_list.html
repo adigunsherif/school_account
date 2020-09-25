@@ -52,13 +52,13 @@
                 <tr>
                     <td>{{forloop.counter}}</td>
                     <td ><a href="{% url 'bill-detail' item.id %}">{{item}}</a></td>
-                    <td>{{currency}} {{item.total | intcomma}}</td>
+                    <td>{{currency}} {{item.amount_payable | intcomma}}</td>
                     <td>{{currency}} {{item.paid | intcomma}}</td>
                     <td class="text-white {% if item.balance  > 0 %} bg-danger {% else %}bg-success{% endif %} ">{{currency}} {{item.balance | intcomma}}</td>
                     <td>{{currency}} {{item.credit | intcomma}} </td>
                     <td>
-                        <a data-form-url="{% url 'bill-journal' item.id %}" data-toggle="tooltip" title="Add journal" class="bs-modal text-danger"><span data-feather="archive"></span></a>
-                        <a data-form-url="{% url 'bill-item' item.id %}" data-toggle="tooltip" title="Add new bill item" class="bs-modal text-primary"><span data-feather="plus"></span></a>
+                        <a data-form-url="" data-toggle="tooltip" title="Add journal" class="bs-modal text-danger"><span data-feather="archive"></span></a>
+                        <a data-form-url="" data-toggle="tooltip" title="Add new bill item" class="bs-modal text-primary"><span data-feather="plus"></span></a>
                         <a data-form-url="{% url 'bill-payment' item.id %}" data-toggle="tooltip" title="Add new payment" class="bs-modal text-primary"><span data-feather="credit-card"></span></a>
                     </td>
                 </tr>

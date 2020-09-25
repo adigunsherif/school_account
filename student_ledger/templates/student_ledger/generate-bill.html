@@ -22,24 +22,6 @@
                 </div>
             {% endfor %}
         </div>
-        <h6>Items<hr></h6>
-        <div class="form-row invalid">
-            {{ bill_item.management_form }}
-            {% for item in bill_item %}
-                {% for field in item.visible_fields %}
-                    <div class="form-group col-sm-6">
-                        {{field.label_tag}}
-                        {{field}}
-                        <small class="form-text text-muted">
-                        {% for error in field.errors %}
-                            <span class="text-danger">{{error}}</span>
-                        {% endfor %}
-                        </small>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        </div>
-
     </div>
 
     <div class="modal-footer">

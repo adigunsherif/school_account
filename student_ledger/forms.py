@@ -81,41 +81,16 @@ class BillForm(BSModalModelForm):
         fields = '__all__'
 
 
-class BillGenerateForm(BSModalForm):
+class BillGenerateForm(BSModalModelForm):
     def __init__(self, *args, **kwargs):
         super(BillGenerateForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control form-control-sm'
 
-    CLASSES = [
-        ('primary', 'Primary'),
-        ('junior', 'Junior'),
-        ('secondary', 'Secondary'),
-    ]
-    session = forms.ModelChoiceField(
-        AcademicSession.objects.all())
-    term = forms.ModelChoiceField(
-        AcademicTerm.objects.all())
-    class_group = forms.ChoiceField(
-        choices=CLASSES)
+    class Meta:
+        model = Bill
+        exclude = ('student',)
 
-    def generate(self, formset):
-        session = self.cleaned_data['session']
-        term = self.cleaned_data['term']
-        class_group = self.cleaned_data['class_group']
-        students = Student.objects.filter(current_class__category=class_group)
-        if students:
-            for student in students:
-                fm = copy.copy(formset)
-                bill, created = Bill.objects.get_or_create(
-                    student = student,
-                    session=session,
-                    term=term,
-                    class_for=student.current_class,
-                )
-                if created:
-                    fm.instance = bill
-                    fm.save()
 
 
 class BillPayForm(BSModalModelForm):
@@ -130,9 +105,6 @@ class BillPayForm(BSModalModelForm):
         widgets = {
             "date": forms.DateInput(attrs={"type":"date"}),
             "comment": forms.TextInput(),
-        }
-        labels = {
-            "bill_item": "Bill Item (if related to an item)",
         }
 
 class StatementSearchForm(forms.Form):
