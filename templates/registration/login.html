@@ -1,0 +1,83 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Adigun Sherif">
+    <title>Login | {{ app_name }} </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'assets/css/login.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/datatables/datatables.min.css' %}" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+
+    <div class="container-fluid">
+        <div class="row">
+
+          <div class="mx-auto text-center">
+
+            <div id="formContent" class="pt-4 mt-5 ">
+
+              <h2>{{app_name}}</h2>
+
+              <!-- Login Form -->
+              <form method="POST">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <span data-feather="user"></span>
+                    </div>
+                  </div>
+                  <input type="text" id="id_username" class="fadeIn second form-control" name="username" placeholder="Your Email">
+                </div>
+
+
+                <div class="input-group mb-4">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <span data-feather="lock"></span>
+                    </div>
+                  </div>
+                  <input type="password" id="id_password" class="fadeIn third form-control" name="password" placeholder="Password">
+                </div>
+
+
+                <input type="submit" class="btn btn-success fadeIn fourth" value="Log In">
+              </form>
+
+            </div>
+
+          </div>
+
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script src="{%static 'assets/js/custom.js' %}"></script>
+
+  </body>
+</html>

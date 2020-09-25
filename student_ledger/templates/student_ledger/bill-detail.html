@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+
+{% block title %}
+    {{object}}
+{% endblock title %}
+
+
+{% block content %}
+
+<div class="btn-toolbar mb-2">
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary">
+      {{object.session}} Session
+    </button>
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary">
+      {{object.term}}
+    </button>
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary">
+      {{object.class_for}}
+    </button>
+</div>
+
+<div class="row">
+    <div class="col-6 col-sm-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+              <h5 class="card-title">Total Amount Payable</h5>
+              <h6 class="card-subtitle mb-2"> {{currency}} {{object.total|intcomma}} </h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+              <h5 class="card-title">Total Amount Paid</h5>
+              <h6 class="card-subtitle mb-2">{{currency}} {{object.paid|intcomma}}</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+              <h5 class="card-title">Debt</h5>
+              <h6 class="card-subtitle mb-2">{{currency}} {{object.balance|intcomma}}</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-3">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+              <h5 class="card-title">Credit</h5>
+              <h6 class="card-subtitle mb-2">{{currency}} {{object.credit|intcomma}}</h6>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="table-responsive">
+    <table class="mt-2 mb-2 table table-bordered">
+        <thead>
+            <tr>
+                <th class="text-danger">Bills</th>
+                <th class="text-danger">Payments</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    {% if object.billitem_set.all %}
+                    <ul class="list-group mb-2">
+                        {% for item in object.billitem_set.all %}
+                        <li class="list-group-item">
+                            <div class="float-right">
+                                <small class="form-text text-muted">
+                                    {{item.created}}
+                                </small>
+                            </div>
+                            {{item.bill_category}}
+                            <span data-feather="arrow-right"></span>
+                            <strong>{{currency}} {{item.amount|intcomma}}</strong>
+                            <small class="form-text text-muted">
+                                {{item.comment}}
+                            </small>
+
+
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        <p>There are no bill item in this bill.</p>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if object.payment_set.all %}
+                        <ul class="list-group">
+                            {% for item in object.payment_set.all %}
+                            <li class="list-group-item">
+                                <div class="float-right">
+                                    <small class="form-text text-muted">
+                                        {{item.date}}
+                                    </small>
+                                </div>
+                                {{item.bank}}
+                                <span data-feather="arrow-right"></span>
+                                <strong>{{currency}} {{item.amount_paid|intcomma}}</strong>
+
+                                <small class="form-text text-muted">
+                                    {{item.comment}}
+                                </small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>There are no payment yet</p>
+                    {% endif %}
+
+
+
+                </td>
+            </tr>
+
+
+        </tbody>
+    </table>
+</div>
+
+<div class="table-responsive">
+    <table class="mt-2 mb-2 table table-bordered">
+        <thead>
+            <tr>
+                <th class="text-danger">JOURNAL (CREDIT)</th>
+                <th class="text-danger">JOURNAL (DEBIT)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <!-- JOURNAL -->
+                    {% if journal_credit %}
+
+                    <ul class="list-group">
+                        {% for item in journal_credit %}
+                        <li class="list-group-item">
+                            <div class="float-right">
+                                <small class="form-text text-muted">
+                                    {{item.created}}
+                                </small>
+                            </div>
+                            <strong>{{currency}} {{item.amount|intcomma}} ({{item.bill_item}})</strong>
+                            <small class="form-text text-muted">
+                                {{item.comment}}
+                            </small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if journal_debit %}
+                        <ul class="list-group">
+                            {% for item in journal_debit %}
+                            <li class="list-group-item">
+                                <div class="float-right">
+                                    <small class="form-text text-muted">
+                                        {{item.created}}
+                                    </small>
+                                </div>
+                                <strong>{{currency}} {{item.amount|intcomma}} ({{item.bill_item}})</strong>
+                                <small class="form-text text-muted">
+                                    {{item.comment}}
+                                </small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+
+
+                </td>
+            </tr>
+
+
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock content %}
+

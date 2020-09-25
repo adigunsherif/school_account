@@ -1,0 +1,108 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>{{app_name}}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'assets/css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/datatables/datatables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/spin/spin.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <div id="spinner" class="spinner"></div>
+    <nav class="navbar navbar-light sticky-top bg-light flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{% url 'home' %}">{{app_name}}</a>
+      <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div>dfsd</div>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="{% url 'logout' %}">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        {% include 'menu.html' %}
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h3>{% block title %}{% endblock title %}</h3>
+
+            {% block toolbar %}
+
+            {% endblock toolbar %}
+
+          </div>
+
+          {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </div>
+              {% endfor %}
+          {% endif %}
+
+
+
+
+          {% block content %}
+
+
+          {% endblock content %}
+
+        </main>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="text-center m-2">
+         All rights reserved
+      </div>
+    </div>
+
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/feather/feather.min.js' %}"></script>
+
+    <script src="{% static 'vendor/chartjs/Chart.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/datatables.min.js' %}"></script>
+    <script src="{% static 'vendor/spin/spin.min.js' %}"></script>
+    <script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+    <script src="{%static 'assets/js/custom.js' %}"></script>
+
+    {% block scripts %}{% endblock scripts %}
+
+  </body>
+</html>

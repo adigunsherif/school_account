@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Settings
+{% endblock title %}
+
+
+{% block content %}
+
+<div class="row">
+  <div class="col-3">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+      <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Academic Terms</a>
+      <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Academic Sessions</a>
+      <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Classes</a>
+      <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Banks</a>
+    </div>
+  </div>
+  <div class="col-9">
+    <div class="tab-content" id="v-pills-tabContent">
+      <div class="tab-pane show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+
+        <form method="POST" class="form-inline">
+          {% csrf_token %}
+          <div class="form-group m-2">
+            Add new term
+          </div>
+          {% for field in term_form %}
+            <div class="form-group m-2">
+              {{field}}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-sm m-2">Add new term</button>
+        </form>
+
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Term Name</th>
+              <th>Current</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for term in terms %}
+            <tr>
+              <td>{{term.name}}</td>
+              <td>{{term.current}}</td>
+              <td>
+                <a href=""><span data-feather="edit"></span></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+        <form method="POST" class="form-inline">
+          {% csrf_token %}
+          <div class="form-group m-2">
+            Add new session
+          </div>
+          {% for field in session_form %}
+            <div class="form-group m-2">
+              {{field}}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-sm m-2">Add new session</button>
+        </form>
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Session Name</th>
+              <th>Current</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for session in sessions %}
+            <tr>
+              <td>{{session.name}}</td>
+              <td>{{session.current}}</td>
+              <td>
+                <a href=""><span data-feather="edit"></span></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+        <form method="POST" class="form-inline">
+          {% csrf_token %}
+          <div class="form-group m-2">
+            Add new class
+          </div>
+          {% for field in class_form %}
+            <div class="form-group m-2">
+              {{field}}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-sm m-2">Add new class</button>
+        </form>
+
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Class Name</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for class in classes %}
+            <tr>
+              <td>{{class.name}}</td>
+              <td>
+                <a href=""><span data-feather="edit"></span></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+
+      </div>
+
+      <div class="tab-pane" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+        <form method="POST" class="form-inline">
+          {% csrf_token %}
+          <div class="form-group m-2">
+            Add new bank
+          </div>
+          {% for field in bank_form %}
+            <div class="form-group m-2">
+              {{field}}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-sm m-2">Add bank</button>
+        </form>
+
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Bank Name</th>
+              <th>Code</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bank in banks %}
+            <tr>
+              <td>{{bank.name}}</td>
+              <td>{{bank.code}}</td>
+              <td>
+                <a href=""><span data-feather="edit"></span></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+
+{% block title %}
+    {{object}}
+{% endblock title %}
+
+
+{% block toolbar %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <a data-form-url="{% url 'student-update' object.id %}" name="button" class="btn btn-sm btn-outline-secondary bs-modal">
+      <span data-feather="edit"></span>
+      Update
+    </a>
+  </div>
+{% endblock toolbar %}
+
+{% block content %}
+
+<div class="btn-toolbar mb-2">
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary">
+      Current Class: {{object.current_class}}
+    </button>
+</div>
+
+
+<div class="table-responsive">
+    <h5>Bill History</h5>
+    <table class="mt-2 mb-2 table table-hover">
+        <thead>
+            <tr>
+                <th class="text-danger">Bills</th>
+                <th class="text-danger">Total</th>
+                <th class="text-danger">Payments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in object.bill_set.all %}
+                <tr>
+                    <td><a href="{% url 'bill-detail' bill.id %}">{{bill}}</a></td>
+                    <td>{{bill.total|intcomma}}</td>
+                    <td>{{bill.paid|intcomma}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div class="modal fade" role="dialog" id="modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
+
+
+{% endblock content %}
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".bs-modal").each(function () {
+                $(this).modalForm({
+                    formURL: $(this).data('form-url')
+                });
+            });
+
+        });
+    </script>
+{% endblock scripts %}

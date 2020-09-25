@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Students
+{% endblock title %}
+
+{% block toolbar %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary" id="payer-create">
+      <span data-feather="plus"></span>
+      Register a new student
+    </button>
+  </div>
+{% endblock toolbar %}
+
+
+{% block content %}
+
+
+{% if object_list %}
+    <table class="table table-hover datatabletable">
+        <thead class="thead-light">
+            <tr>
+                <th>Fullname</th>
+                <th>Current Class</th>
+                <th>Contact</th>
+                <th>Operations</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for item in object_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'student-detail' item.id %}">{{item}}</a>
+                    </td>
+                    <td>{{item.current_class}}</td>
+                    <td>{{item.contact_number}}</td>
+                    <td>
+                        <a data-form-url="{% url 'student-update' item.id %}" class="bs-modal"><span data-feather="edit"></span></a>
+                        <a data-form-url="{% url 'student-delete' item.id %}" class="bs-modal text-danger"><span data-feather="delete"></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% else %}
+    There are currently no registered student
+{% endif %}
+
+
+<div class="modal fade" role="dialog" id="modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
+
+{% endblock content %}
+
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#payer-create").modalForm({
+                formURL: "{% url 'student-create' %}"
+            });
+
+            $(".bs-modal").each(function () {
+                $(this).modalForm({
+                    formURL: $(this).data('form-url')
+                });
+            });
+
+        });
+    </script>
+{% endblock scripts %}
