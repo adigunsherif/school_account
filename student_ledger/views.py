@@ -58,8 +58,37 @@ def settings_view(request):
     return render(request, 'student_ledger/settings.html', context)
 
 
+class SessionUpdateForm(LoginRequiredMixin, BSModalUpdateView):
+    model = AcademicSession
+    form_class = SessionForm
+    template_name = 'student_ledger/update_form.html'
+    success_url = reverse_lazy('settings')
+    context_object_name = 'object'
 
-# Create your views here.
+
+class TermUpdateForm(LoginRequiredMixin, BSModalUpdateView):
+    model = AcademicTerm
+    form_class = TermForm
+    template_name = 'student_ledger/update_form.html'
+    success_url = reverse_lazy('settings')
+    context_object_name = 'object'
+
+
+class ClassUpdateForm(LoginRequiredMixin, BSModalUpdateView):
+    model = StudentClass
+    form_class = ClassForm
+    template_name = 'student_ledger/update_form.html'
+    success_url = reverse_lazy('settings')
+    context_object_name = 'object'
+
+
+class BankUpdateForm(LoginRequiredMixin, BSModalUpdateView):
+    model = Bank
+    form_class = BankForm
+    template_name = 'student_ledger/update_form.html'
+    success_url = reverse_lazy('settings')
+    context_object_name = 'object'
+
 
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student

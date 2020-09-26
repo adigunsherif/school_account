@@ -4,7 +4,7 @@ from bootstrap_modal_forms.forms import BSModalModelForm, BSModalForm
 
 from .models import AcademicSession, AcademicTerm, Bank, StudentClass, Student, StudentClass, Payment, Bill
 
-class TermForm(ModelForm):
+class TermForm(BSModalModelForm):
     class Meta:
         model = AcademicTerm
         fields = ['name','current']
@@ -13,7 +13,7 @@ class TermForm(ModelForm):
         }
 
 
-class SessionForm(ModelForm):
+class SessionForm(BSModalModelForm):
     class Meta:
         model = AcademicSession
         fields = ['name', 'current']
@@ -21,7 +21,7 @@ class SessionForm(ModelForm):
             "name": forms.TextInput(attrs={"class":"form-control form-control-sm", "placeholder": "Session Name. E.g 2012/2013"})
         }
 
-class ClassForm(ModelForm):
+class ClassForm(BSModalModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -33,7 +33,7 @@ class ClassForm(ModelForm):
             "name": forms.TextInput(attrs={"placeholder": "Class Name"})
         }
 
-class BankForm(ModelForm):
+class BankForm(BSModalModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():

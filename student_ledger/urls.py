@@ -6,6 +6,11 @@ urlpatterns = [
     path('', views.BillListView.as_view(), name='home'),
     path('settings/', views.settings_view, name='settings'),
 
+    path('session/<int:pk>/update/', views.SessionUpdateForm.as_view(), name='session-update'),
+    path('term/<int:pk>/update/', views.TermUpdateForm.as_view(), name='term-update'),
+    path('class/<int:pk>/update/', views.ClassUpdateForm.as_view(), name='class-update'),
+    path('bank/<int:pk>/update/', views.BankUpdateForm.as_view(), name='bank-update'),
+
     path('students/', views.StudentListView.as_view(), name='students'),
     path('students/create/', views.StudentCreateView.as_view(), name='student-create'),
     path('students/<int:pk>/detail/', views.StudentDetailView.as_view(), name='student-detail'),

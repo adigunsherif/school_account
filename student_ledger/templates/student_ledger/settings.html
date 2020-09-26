@@ -48,7 +48,7 @@
               <td>{{term.name}}</td>
               <td>{{term.current}}</td>
               <td>
-                <a href=""><span data-feather="edit"></span></a>
+                <a data-form-url="{% url 'term-update' term.id %}" class="bs-modal"><span data-feather="edit"></span></a>
               </td>
             </tr>
             {% endfor %}
@@ -83,7 +83,7 @@
               <td>{{session.name}}</td>
               <td>{{session.current}}</td>
               <td>
-                <a href=""><span data-feather="edit"></span></a>
+                <a data-form-url="{% url 'session-update' session.id %}" class="bs-modal"><span data-feather="edit"></span></a>
               </td>
             </tr>
             {% endfor %}
@@ -117,7 +117,7 @@
             <tr>
               <td>{{class.name}}</td>
               <td>
-                <a href=""><span data-feather="edit"></span></a>
+                <a data-form-url="{% url 'class-update' class.id %}" class="bs-modal"><span data-feather="edit"></span></a>
               </td>
             </tr>
             {% endfor %}
@@ -155,7 +155,7 @@
               <td>{{bank.name}}</td>
               <td>{{bank.code}}</td>
               <td>
-                <a href=""><span data-feather="edit"></span></a>
+                <a data-form-url="{% url 'bank-update' bank.id %}" class="bs-modal"><span data-feather="edit"></span></a>
               </td>
             </tr>
             {% endfor %}
@@ -169,5 +169,25 @@
   </div>
 </div>
 
+<div class="modal fade" role="dialog" id="modal" tabindex="-1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
 {% endblock content %}
 
+
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+
+            $(".bs-modal").each(function () {
+                $(this).modalForm({
+                    formURL: $(this).data('form-url')
+                });
+            });
+        });
+    </script>
+{% endblock scripts %}
