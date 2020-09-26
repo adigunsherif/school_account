@@ -140,39 +140,6 @@ class BillListView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 
-class dd(LoginRequiredMixin, ListView):
-    model = Bill
-
-    def get_queryset(self):
-        queryset = Bill.objects.none()
-        req = self.request.GET
-        params = req.dict()
-        if params:
-            queryset = Bill.objects.filter(**params)
-
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        payable = 0
-        paid = 0
-        balance = 0
-        credit = 0
-
-        for bill in context['object_list']:
-            payable += bill.amount_payable
-            paid += bill.paid
-            balance += bill.balance
-            credit += bill.credit
-
-        totals = [payable, paid, balance, credit]
-        context['totals'] = totals
-        req = self.request.GET
-        params = dict(req.dict())
-        context['search'] = SearchForm(initial=params)
-        return context
-
-
 class BillCreateView(LoginRequiredMixin, BSModalCreateView):
     form_class = BillForm
     success_url = reverse_lazy('home')
@@ -198,7 +165,7 @@ class BillGenerateView(LoginRequiredMixin, BSModalFormView):
             session = form.cleaned_data['session']
             term = form.cleaned_data['term']
             amount_payable = form.cleaned_data['amount_payable']
-            students = Student.objects.filter(current_class=class_for)
+            students = Student.objects.filter(current_class=class_for, active=True)
             bills = []
             for student in students:
                 bills.append(Bill(

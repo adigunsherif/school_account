@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'bootstrap_modal_forms',
     'users',
     'student_ledger',
+    'expenses',
 ]
 
 MIDDLEWARE = [

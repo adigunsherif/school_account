@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('u/', include('django.contrib.auth.urls')),
     path('', include('student_ledger.urls')),
+    path('xp/', include('expenses.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

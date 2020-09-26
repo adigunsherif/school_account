@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    Expenses
+{% endblock title %}
+
+{% block toolbar %}
+<div class="btn-toolbar mb-2 mb-md-0">
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary" id="expenses-create">
+      <span data-feather="plus"></span>
+      Add new expenses
+    </button>
+  </div>
+{% endblock toolbar %}
+
+
+{% block content %}
+
+
+{% if object_list %}
+    <table class="table table-hover datatabletable">
+        <thead class="thead-light">
+            <tr>
+                <th></th>
+                <th>Short Description</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Additional Comment</th>
+                <th>Operations</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for item in object_list %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{item}}</td>
+                    <td>{{item.date}}</td>
+                    <td>{{currency}} {{item.amount|intcomma}}</td>
+                    <td>
+                        <details>
+                            <summary>Comment</summary>
+                            <p>{{item.additional_comment}}</p>
+                          </details>
+                    </td>
+                    <td>
+                        <a data-form-url="{% url 'expenses-update' item.id %}" class="bs-modal"><span data-feather="edit"></span></a>
+                        <a data-form-url="{% url 'expenses-delete' item.id %}" class="bs-modal text-danger"><span data-feather="delete"></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% else %}
+    There are currently no expenses
+{% endif %}
+
+
+<div class="modal fade" role="dialog" id="modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
+
+{% endblock content %}
+
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#expenses-create").modalForm({
+                formURL: "{% url 'expenses-create' %}"
+            });
+
+            $(".bs-modal").each(function () {
+                $(this).modalForm({
+                    formURL: $(this).data('form-url')
+                });
+            });
+
+        });
+    </script>
+{% endblock scripts %}
