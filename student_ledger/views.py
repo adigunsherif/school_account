@@ -1,3 +1,4 @@
+from django.db.models.functions import Coalesce
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -149,9 +150,9 @@ class BillListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         params = {x:y for x, y in request.GET.items() if y}
         aggregation = {
-            "total_bill": Sum('amount_payable'),
-            "total_paid": Sum('payment__amount_paid'),
-            "total_debt": Sum('amount_payable') - Sum('payment__amount_paid')
+            "total_bill": Coalesce(Sum('amount_payable'),0),
+            "total_paid": Coalesce(Sum('payment__amount_paid'), 0),
+            "total_debt": Coalesce(Sum('amount_payable'), 0) - Coalesce(Sum('payment__amount_paid'), 0)
         }
 
         bills = Bill.objects.all()

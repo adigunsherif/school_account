@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Sum
+from django.utils.timezone import now
 from django.urls import reverse
 
 class StudentClass(models.Model):
@@ -93,7 +94,7 @@ class Payment(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
     bank = models.ForeignKey(Bank, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=11, decimal_places=2)
-    date = models.DateField()
+    date = models.DateField(default=now)
     comment = models.TextField(blank=True)
 
     def __str__(self):
