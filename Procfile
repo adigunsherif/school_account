@@ -1,2 +1,2 @@
 release: python manage.py migrate --noinput
-web: gunicorn rashaad_acnt.wsgi --log-file -
+web: gunicorn school_account.wsgi --log-file -
