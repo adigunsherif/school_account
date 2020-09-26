@@ -16,18 +16,33 @@
 
 
 {% block content %}
+<form method="GET" class="form-inline mb-3">
+    {% for field in search %}
+        <div class="field-group mr-sm-2">
+            {{field}}
+        </div>
+
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+</form>
 
 
 {% if object_list %}
-    <table class="table table-hover datatabletable">
+<div class="row">
+    <div class="col">
+        <h4>
+            Total Expenses: {{currency}} {{total.total|intcomma}}
+        </h4>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-hover">
         <thead class="thead-light">
             <tr>
-                <th></th>
-                <th>Short Description</th>
-                <th>Date</th>
+                <th>S/N</th>
+                <th>Description</th>
                 <th>Amount</th>
-                <th>Additional Comment</th>
-                <th>Operations</th>
             </tr>
         </thead>
         <tbody>
@@ -35,24 +50,23 @@
             {% for item in object_list %}
                 <tr>
                     <td>{{forloop.counter}}</td>
-                    <td>{{item}}</td>
-                    <td>{{item.date}}</td>
-                    <td>{{currency}} {{item.amount|intcomma}}</td>
                     <td>
                         <details>
-                            <summary>Comment</summary>
-                            <p>{{item.additional_comment}}</p>
-                          </details>
+                            <summary> {{item}}</summary>
+                            <p>{{item.additional_comment}}<br>
+                                {{item.date}}<br>
+                                <a data-form-url="{% url 'expenses-update' item.id %}" class="bs-modal"><span data-feather="edit"></span></a>
+                                <a data-form-url="{% url 'expenses-delete' item.id %}" class="bs-modal text-danger"><span data-feather="delete"></span></a>
+                            </p>
+                        </details>
                     </td>
-                    <td>
-                        <a data-form-url="{% url 'expenses-update' item.id %}" class="bs-modal"><span data-feather="edit"></span></a>
-                        <a data-form-url="{% url 'expenses-delete' item.id %}" class="bs-modal text-danger"><span data-feather="delete"></span></a>
-                    </td>
+                    <td>{{currency}} {{item.amount|intcomma}}</td>
                 </tr>
             {% endfor %}
 
         </tbody>
     </table>
+</div>
 {% else %}
     There are currently no expenses
 {% endif %}
