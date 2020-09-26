@@ -15,6 +15,8 @@ urlpatterns = [
     path('bill/<int:pk>/detail/', views.BillDetailView.as_view(), name='bill-detail'),
     path('bill/create/', views.BillCreateView.as_view(), name='bill-create'),
     path('bill/generate/', views.BillGenerateView.as_view(), name='bill-generate'),
+     path('bill/<int:pk>/update/', views.BillUpdateView.as_view(), name='bill-update'),
+    path('bill/<int:pk>/delete/', views.BillDeleteView.as_view(), name='bill-delete'),
 
 
     path('bill/<int:pk>/pay/', views.BillPay.as_view(), name='bill-payment'),

@@ -124,14 +124,18 @@ class BillListView(LoginRequiredMixin, View):
             "total_paid": Sum('payment__amount_paid'),
             "total_debt": Sum('amount_payable') - Sum('payment__amount_paid')
         }
-        bills = Bill.objects.aggregate(**aggregation)
+
+        bills = Bill.objects.all()
+        bills_aggregate = bills.aggregate(**aggregation)
 
         if params:
-            bills = Bill.objects.filter(**params).aggregate(**aggregation)
+            bills = Bill.objects.filter(**params)
+            bills_aggregate = bills.aggregate(**aggregation)
 
         context = {
             "search": self.form_class(initial=params),
             "bills": bills,
+            "bills_aggregate":bills_aggregate,
         }
         return render(request, self.template_name, context)
 
@@ -171,7 +175,7 @@ class dd(LoginRequiredMixin, ListView):
 
 class BillCreateView(LoginRequiredMixin, BSModalCreateView):
     form_class = BillForm
-    success_url = reverse_lazy('bills')
+    success_url = reverse_lazy('home')
     template_name = 'student_ledger/create_form.html'
 
     def get_context_data(self, **kwargs):
@@ -184,7 +188,7 @@ class BillCreateView(LoginRequiredMixin, BSModalCreateView):
 class BillGenerateView(LoginRequiredMixin, BSModalFormView):
     form_class = BillGenerateForm
     template_name = 'student_ledger/generate-bill.html'
-    success_url = reverse_lazy('bills')
+    success_url = reverse_lazy('home')
     success_message = "Bills successfully created"
 
 
@@ -212,7 +216,7 @@ class BillGenerateView(LoginRequiredMixin, BSModalFormView):
 class BillPay(BSModalCreateView):
     form_class = BillPayForm
     template_name = 'student_ledger/create_form.html'
-    success_url = reverse_lazy('bills')
+    success_url = reverse_lazy('home')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -230,56 +234,20 @@ class BillDetailView(LoginRequiredMixin, DetailView):
     model = Bill
     template_name = "student_ledger/bill-detail.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['journal_credit'] = Journal.objects.filter(bill=self.object, journal_type='credit')
-        context['journal_debit'] = Journal.objects.filter(bill=self.object, journal_type='debit')
-        return context
 
 
-
-class BackStatementView(LoginRequiredMixin, View):
-    """ Show statement for student bills """
-
-    template_name = 'student_ledger/statement.html'
-    form_class = StatementSearchForm
-
-    def get(self, request, *args, **kwargs):
-        bills = Bill.objects.all()
-        params = {x:y for x, y in request.GET.items() if y}
-
-        if params:
-            bills = Bill.objects.filter(**params)
-
-        total_bill = 0
-        total_paid = 0
-        total_debt = 0
-        total_credit = 0
-        for bill in bills:
-            total_bill += bill.amount_payable
-            total_paid += bill.paid
-            total_debt += bill.balance
-            total_credit += bill.credit
-
-        bill_total = (total_bill, total_paid, total_debt, total_credit)
+class BillUpdateView(LoginRequiredMixin, BSModalUpdateView):
+    model = Bill
+    form_class = BillForm
+    success_url = reverse_lazy('home')
+    success_message = 'Bill was successfully updated.'
+    template_name = 'student_ledger/update_form.html'
+    context_object_name = 'object'
 
 
-        #payments
-        payments = Payment.objects.filter(bill__in=bills)
-
-        #banks
-        banks = {}
-        for bank in payments.values('bank', 'bank__name').distinct():
-            b = payments.filter(bank_id=bank['bank']).aggregate(Sum('amount_paid'))
-            banks[bank['bank__name']] = b['amount_paid__sum']
-
-        context = {
-            "search": self.form_class(initial=params),
-            "bills": bills,
-            "bill_totals": bill_total,
-            "banks": banks,
-        }
-
-        return render(request, self.template_name, context)
-
-
+class BillDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = Bill
+    template_name = 'student_ledger/delete_form.html'
+    success_message = 'Success: Bill was deleted.'
+    success_url = reverse_lazy('home')
+    context_object_name = "object"

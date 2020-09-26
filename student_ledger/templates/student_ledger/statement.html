@@ -9,12 +9,15 @@
 {% block toolbar %}
 <div class="btn-toolbar mb-2 mb-md-0">
     <button type="button" name="button" class="btn btn-sm btn-outline-secondary" id="generate-invoice">
-      <span data-feather="download"></span>
-      Download
+      <span data-feather="plus"></span>
+      Generate a single bill
+    </button>
+    <button type="button" name="button" class="btn btn-sm btn-outline-secondary" id="add-invoice">
+      <span data-feather="plus"></span>
+      Generate bulk bills
     </button>
   </div>
 {% endblock toolbar %}
-
 
 {% block content %}
 
@@ -36,19 +39,37 @@
         <div class="col-sm-8">
             <div class="row">
                 <div class="col mb-2 bg-primary text-white">
-                    <h6 class="card-title">{{currency}} {{bills.total_bill | intcomma}} </h6>
+                    <h6 class="card-title">{{currency}}
+                        {% if bills_aggregate.total_bill  %}
+                            {{bills_aggregate.total_bill  | intcomma}}
+                        {% else %}
+                            0
+                        {% endif %}
+                     </h6>
                     <p class="card-text">Total Expected Amount</p>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col mb-2 bg-success text-white">
-                    <h6 class="card-title">{{currency}} {{bills.total_paid | intcomma}}</h6>
+                    <h6 class="card-title">{{currency}}
+                        {% if bills_aggregate.total_paid  %}
+                            {{bills_aggregate.total_paid  | intcomma}}
+                        {% else %}
+                            0
+                        {% endif %}</h6>
                     <p class="card-text">Total Amount Paid</p>
                 </div>
                 <div class="col mb-2 bg-danger text-white">
-                    <h6 class="card-title">{{currency}} {{bills.total_debt | intcomma}}</h6>
+                    <h6 class="card-title">{{currency}}
+                        {% if bills_aggregate.total_debt %}
+                            {{bills_aggregate.total_debt | intcomma}}
+                        {% else %}
+                            0
+                        {% endif %}
+                             </h6>
                     <p class="card-text">Debts</p>
                 </div>
             </div>
-
         </div>
 
         <div class="col-sm-4">
@@ -64,22 +85,20 @@
                 <th>Total Payable</th>
                 <th>Total paid</th>
                 <th>Debt</th>
-                <th>Credit</th>
                 <th>Operations</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in object_list %}
+            {% for item in bills %}
                 <tr>
                     <td>{{forloop.counter}}</td>
                     <td ><a href="{% url 'bill-detail' item.id %}">{{item}}</a></td>
                     <td>{{currency}} {{item.amount_payable | intcomma}}</td>
                     <td>{{currency}} {{item.paid | intcomma}}</td>
                     <td class="text-white {% if item.balance  > 0 %} bg-danger {% else %}bg-success{% endif %} ">{{currency}} {{item.balance | intcomma}}</td>
-                    <td>{{currency}} {{item.credit | intcomma}} </td>
                     <td>
-                        <a data-form-url="" data-toggle="tooltip" title="Add journal" class="bs-modal text-danger"><span data-feather="archive"></span></a>
-                        <a data-form-url="" data-toggle="tooltip" title="Add new bill item" class="bs-modal text-primary"><span data-feather="plus"></span></a>
+                        <a data-form-url="{% url 'bill-update' item.id %}" data-toggle="tooltip" title="Edit" class="bs-modal text-primary"><span data-feather="edit"></span></a>
+                        <a data-form-url="{% url 'bill-delete' item.id %}" data-toggle="tooltip" title="Delete" class="bs-modal text-danger"><span data-feather="trash"></span></a>
                         <a data-form-url="{% url 'bill-payment' item.id %}" data-toggle="tooltip" title="Add new payment" class="bs-modal text-primary"><span data-feather="credit-card"></span></a>
                     </td>
                 </tr>
@@ -89,10 +108,9 @@
         <tfoot>
             <tr>
                 <td colspan=2></td>
-                <td>{{currency}} {{totals.0 | intcomma}}</td>
-                <td>{{currency}} {{totals.1 | intcomma}}</td>
-                <td>{{currency}} {{totals.2 | intcomma}}</td>
-                <td>{{currency}} {{totals.3 | intcomma}}</td>
+                <td>{{currency}} {{bills_aggregate.total_bill | intcomma}}</td>
+                <td>{{currency}} {{bills_aggregate.total_paid | intcomma}}</td>
+                <td>{{currency}} {{bills_aggregate.total_debt | intcomma}}</td>
                 <td></td>
             </tr>
         </tfoot>
@@ -129,6 +147,11 @@
 {% endif %}
 
 
+<div class="modal fade" role="dialog" id="modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
 
 {% endblock content %}
 
@@ -136,28 +159,51 @@
 
 {% block scripts %}
     <script>
-        var ctx = document.getElementById('myChart')
-        // eslint-disable-next-line no-unused-vars
-        var myChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                datasets: [{
-                    data: ["{{bill_totals.0}}", "{{bill_totals.1}}", "{{bill_totals.2}}", "{{bill_totals.3}}"],
-                    backgroundColor: [
-                        'blue',
-                        'green',
-                        'red',
-                        'grey'
-                    ]
-                }],
-                labels: [
-                    'Expected',
-                    'Paid',
-                    'Debt',
-                    'Credit',
-                ]
+        $(document).ready(function() {
+            $("#generate-invoice").modalForm({
+                formURL: "{% url 'bill-create' %}"
+            });
 
-            }
-        })
+            $("#add-invoice").modalForm({
+                formURL: "{% url 'bill-generate' %}"
+            });
+
+            $(".bs-modal").each(function () {
+                $(this).modalForm({
+                    formURL: $(this).data('form-url')
+                });
+            });
+        });
     </script>
+
+
+    {% if bills %}
+        <script>
+            var ctx = document.getElementById('myChart')
+            // eslint-disable-next-line no-unused-vars
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: ["{{bills_aggregate.total_bill}}", "{{bills_aggregate.total_paid}}", "{{bills_aggregate.total_debt}}"],
+                        backgroundColor: [
+                            'blue',
+                            'green',
+                            'red'
+                        ]
+                    }],
+                    labels: [
+                        'Expected',
+                        'Paid',
+                        'Debt'
+                    ]
+
+                }
+            })
+        </script>
+    {% endif %}
+
+
+
+
 {% endblock scripts %}
