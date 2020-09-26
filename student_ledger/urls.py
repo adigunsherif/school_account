@@ -18,6 +18,8 @@ urlpatterns = [
      path('bill/<int:pk>/update/', views.BillUpdateView.as_view(), name='bill-update'),
     path('bill/<int:pk>/delete/', views.BillDeleteView.as_view(), name='bill-delete'),
 
+    path('payment/<int:pk>/delete/', views.PaymentDeleteView.as_view(), name='payment-delete'),
+
 
     path('bill/<int:pk>/pay/', views.BillPay.as_view(), name='bill-payment'),
 ]

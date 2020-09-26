@@ -39,7 +39,7 @@
             {% for bill in object.bill_set.all %}
                 <tr>
                     <td><a href="{% url 'bill-detail' bill.id %}">{{bill}}</a></td>
-                    <td>{{bill.total|intcomma}}</td>
+                    <td>{{bill.amount_payable|intcomma}}</td>
                     <td>{{bill.paid|intcomma}}</td>
                 </tr>
             {% endfor %}

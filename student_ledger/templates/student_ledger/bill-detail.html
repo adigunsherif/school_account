@@ -72,6 +72,7 @@
                                     <small class="form-text text-muted">
                                         {{item.date}}
                                     </small>
+                                    <a data-form-url="{% url 'payment-delete' item.id %}" data-toggle="tooltip" title="Delete" class="bs-modal text-danger"><span data-feather="trash"></span></a>
                                 </div>
                                 {{item.bank}}
                                 <span data-feather="arrow-right"></span>
@@ -98,7 +99,28 @@
 </div>
 
 
+<div class="modal fade" role="dialog" id="modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
 
 
 {% endblock content %}
 
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+            $(".bs-modal").each(function () {
+                $(this).modalForm({
+                    formURL: $(this).data('form-url')
+                });
+            });
+        });
+    </script>
+
+
+
+{% endblock scripts %}

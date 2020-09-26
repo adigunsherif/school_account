@@ -251,3 +251,14 @@ class BillDeleteView(LoginRequiredMixin, BSModalDeleteView):
     success_message = 'Success: Bill was deleted.'
     success_url = reverse_lazy('home')
     context_object_name = "object"
+
+
+class PaymentDeleteView(LoginRequiredMixin, BSModalDeleteView):
+    model = Payment
+    template_name = 'student_ledger/delete_form.html'
+    success_message = 'Success: Payment was deleted.'
+    context_object_name = "object"
+
+    def get_success_url(self):
+        return self.object.bill.get_absolute_url()
+

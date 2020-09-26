@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Sum
+from django.urls import reverse
 
 class StudentClass(models.Model):
     CATEGORIES = [
@@ -66,6 +67,9 @@ class Bill(models.Model):
     def __str__(self):
         return f"{self.student}'s bill"
 
+    def get_absolute_url(self):
+        return reverse('bill-detail', kwargs={'pk': self.pk})
+
     @property
     def paid(self):
         tt = Payment.objects.filter(bill=self).aggregate(Sum('amount_paid'))
@@ -91,3 +95,6 @@ class Payment(models.Model):
     amount_paid = models.DecimalField(max_digits=11, decimal_places=2)
     date = models.DateField()
     comment = models.TextField(blank=True)
+
+    def __str__(self):
+        return f'Payment for {self.bill}'
