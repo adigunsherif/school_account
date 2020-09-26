@@ -30,54 +30,73 @@
 </form>
 
 
-
-
 {% if bills %}
 
     <div class="row">
-        <div class="col-sm-7">
+        <div class="col-sm-8">
             <div class="row">
-                <div class="col-7 mb-2">
-                    <div class="card">
-                        <div class="card-body bg-primary text-white">
-                            <h5 class="card-title">{{currency}} {{bill_totals.0 | intcomma}} </h5>
-                            <p class="card-text">Total Expected Amount</p>
-                        </div>
-                    </div>
+                <div class="col mb-2 bg-primary text-white">
+                    <h6 class="card-title">{{currency}} {{bills.total_bill | intcomma}} </h6>
+                    <p class="card-text">Total Expected Amount</p>
                 </div>
-                <div class="col-5 mb-2">
-                    <div class="card">
-                        <div class="card-body bg-success text-white">
-                            <h5 class="card-title">{{currency}} {{bill_totals.1 | intcomma}}</h5>
-                            <p class="card-text">Total Amount Paid</p>
-                        </div>
-                    </div>
+                <div class="col mb-2 bg-success text-white">
+                    <h6 class="card-title">{{currency}} {{bills.total_paid | intcomma}}</h6>
+                    <p class="card-text">Total Amount Paid</p>
+                </div>
+                <div class="col mb-2 bg-danger text-white">
+                    <h6 class="card-title">{{currency}} {{bills.total_debt | intcomma}}</h6>
+                    <p class="card-text">Debts</p>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-body bg-danger text-white">
-                          <h5 class="card-title">{{currency}} {{bill_totals.2 | intcomma}}</h5>
-                          <p class="card-text">Debts</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-body bg-secondary text-white">
-                            <h5 class="card-title">{{currency}} {{bill_totals.3 | intcomma}}</h5>
-                            <p class="card-text">Credit</p>
-                        </div>
-                        </div>
-                </div>
-            </div>
         </div>
-        <div class="col-sm-5">
+
+        <div class="col-sm-4">
             <canvas id="myChart" width="400" height="200"></canvas>
         </div>
     </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Total Payable</th>
+                <th>Total paid</th>
+                <th>Debt</th>
+                <th>Credit</th>
+                <th>Operations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in object_list %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td ><a href="{% url 'bill-detail' item.id %}">{{item}}</a></td>
+                    <td>{{currency}} {{item.amount_payable | intcomma}}</td>
+                    <td>{{currency}} {{item.paid | intcomma}}</td>
+                    <td class="text-white {% if item.balance  > 0 %} bg-danger {% else %}bg-success{% endif %} ">{{currency}} {{item.balance | intcomma}}</td>
+                    <td>{{currency}} {{item.credit | intcomma}} </td>
+                    <td>
+                        <a data-form-url="" data-toggle="tooltip" title="Add journal" class="bs-modal text-danger"><span data-feather="archive"></span></a>
+                        <a data-form-url="" data-toggle="tooltip" title="Add new bill item" class="bs-modal text-primary"><span data-feather="plus"></span></a>
+                        <a data-form-url="{% url 'bill-payment' item.id %}" data-toggle="tooltip" title="Add new payment" class="bs-modal text-primary"><span data-feather="credit-card"></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan=2></td>
+                <td>{{currency}} {{totals.0 | intcomma}}</td>
+                <td>{{currency}} {{totals.1 | intcomma}}</td>
+                <td>{{currency}} {{totals.2 | intcomma}}</td>
+                <td>{{currency}} {{totals.3 | intcomma}}</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
 
 
 

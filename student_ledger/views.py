@@ -112,7 +112,31 @@ class StudentDeleteView(LoginRequiredMixin, BSModalDeleteView):
 
 """
 
-class BillListView(LoginRequiredMixin, ListView):
+class BillListView(LoginRequiredMixin, View):
+    """ Show statement for student bills """
+    template_name = 'student_ledger/statement.html'
+    form_class = StatementSearchForm
+
+    def get(self, request, *args, **kwargs):
+        params = {x:y for x, y in request.GET.items() if y}
+        aggregation = {
+            "total_bill": Sum('amount_payable'),
+            "total_paid": Sum('payment__amount_paid'),
+            "total_debt": Sum('amount_payable') - Sum('payment__amount_paid')
+        }
+        bills = Bill.objects.aggregate(**aggregation)
+
+        if params:
+            bills = Bill.objects.filter(**params).aggregate(**aggregation)
+
+        context = {
+            "search": self.form_class(initial=params),
+            "bills": bills,
+        }
+        return render(request, self.template_name, context)
+
+
+class dd(LoginRequiredMixin, ListView):
     model = Bill
 
     def get_queryset(self):
@@ -214,46 +238,48 @@ class BillDetailView(LoginRequiredMixin, DetailView):
 
 
 
-class StatementView(LoginRequiredMixin, View):
+class BackStatementView(LoginRequiredMixin, View):
     """ Show statement for student bills """
 
     template_name = 'student_ledger/statement.html'
     form_class = StatementSearchForm
 
     def get(self, request, *args, **kwargs):
+        bills = Bill.objects.all()
         params = {x:y for x, y in request.GET.items() if y}
-        context = {
-            "search": self.form_class(initial=params),
-        }
+
         if params:
             bills = Bill.objects.filter(**params)
 
-            total_bill = 0
-            total_paid = 0
-            total_debt = 0
-            total_credit = 0
-            for bill in bills:
-                total_bill += bill.amount_payable
-                total_paid += bill.paid
-                total_debt += bill.balance
-                total_credit += bill.credit
+        total_bill = 0
+        total_paid = 0
+        total_debt = 0
+        total_credit = 0
+        for bill in bills:
+            total_bill += bill.amount_payable
+            total_paid += bill.paid
+            total_debt += bill.balance
+            total_credit += bill.credit
 
-            bill_total = (total_bill, total_paid, total_debt, total_credit)
+        bill_total = (total_bill, total_paid, total_debt, total_credit)
 
 
-            #payments
-            payments = Payment.objects.filter(bill__in=bills)
+        #payments
+        payments = Payment.objects.filter(bill__in=bills)
 
-            #banks
-            banks = {}
-            for bank in payments.values('bank', 'bank__name').distinct():
-                b = payments.filter(bank_id=bank['bank']).aggregate(Sum('amount_paid'))
-                banks[bank['bank__name']] = b['amount_paid__sum']
+        #banks
+        banks = {}
+        for bank in payments.values('bank', 'bank__name').distinct():
+            b = payments.filter(bank_id=bank['bank']).aggregate(Sum('amount_paid'))
+            banks[bank['bank__name']] = b['amount_paid__sum']
 
-            context["bills"] = bills
-            context["bill_totals"] = bill_total
-            context["banks"] = banks
-            #context["d"]
-
+        context = {
+            "search": self.form_class(initial=params),
+            "bills": bills,
+            "bill_totals": bill_total,
+            "banks": banks,
+        }
 
         return render(request, self.template_name, context)
+
+
