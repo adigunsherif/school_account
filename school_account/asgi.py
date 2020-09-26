@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rashaad_acnt.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'school_account.settings')
 
 application = get_asgi_application()

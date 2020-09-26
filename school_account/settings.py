@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'rashaad_acnt.urls'
+ROOT_URLCONF = 'school_account.urls'
 
 TEMPLATES = [
     {
@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'rashaad_acnt.wsgi.application'
+WSGI_APPLICATION = 'school_account.wsgi.application'
 
 
 # Database
@@ -152,6 +152,6 @@ LOGIN_URL = 'login'
 AUTH_USER_MODEL = 'users.User'
 
 
-APP_NAME = 'Rashaad Account'
+APP_NAME = 'School Account'
 
 CURRENCY = '&#8358;'
